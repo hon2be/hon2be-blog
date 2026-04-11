@@ -1,3 +1,6 @@
+import { useEffect, useRef } from 'react'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/rose-pine-moon.min.css'
 import { posts } from '../data/posts'
 import { PixelButton } from '../components/PixelButton'
 
@@ -16,6 +19,13 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export function PostDetail({ slug, onBack }: PostDetailProps) {
   const post = posts.find(p => p.slug === slug)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    contentRef.current?.querySelectorAll('pre code').forEach(el => {
+      hljs.highlightElement(el as HTMLElement)
+    })
+  }, [slug])
 
   if (!post) {
     return (
@@ -124,6 +134,7 @@ export function PostDetail({ slug, onBack }: PostDetailProps) {
 
         {/* 본문 */}
         <div
+          ref={contentRef}
           data-post
           dangerouslySetInnerHTML={{ __html: post.content }}
           style={{

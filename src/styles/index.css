@@ -1,4 +1,6 @@
 @import url('https://cdn.jsdelivr.net/gh/MonadABXY/mona-font/web/mona.css');
+@import url('https://hangeul.pstatic.net/hangeul_static/css/nanum-gothic-coding.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
   /* Cherry Pink Accent — 스프라이트 꽃잎 색상 기반 */
@@ -25,6 +27,12 @@
   font-family: 'Mona12', 'Courier New', monospace;
   margin: 0;
   padding: 0;
+  cursor: none !important;
+}
+
+::selection {
+  background: var(--accent-xl);
+  color: var(--accent-dd);
 }
 
 html {
@@ -53,6 +61,17 @@ a {
 
 img {
   display: block;
+}
+
+pre {
+  padding: 0 !important;
+}
+
+pre code,
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace !important;
+  font-size: 12px;
+  line-height: 1.7;
 }
 
 /* ── 유틸리티 ── */
@@ -102,6 +121,11 @@ img {
   100% { transform: scale(1); opacity: 1; }
 }
 
+@keyframes bloomPulse {
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.04); }
+}
+
 @keyframes loadingDot {
   0%, 80%, 100% { opacity: 0.3; transform: scaleY(0.6); }
   40%            { opacity: 1;   transform: scaleY(1); }
@@ -111,4 +135,9 @@ img {
 @keyframes screenFadeOut {
   from { opacity: 1; }
   to   { opacity: 0; pointer-events: none; }
+}
+
+@keyframes cursorSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
 }
