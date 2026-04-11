@@ -1,8 +1,13 @@
+import { type Category } from './categories'
+
+export type { Category }
+export { categories } from './categories'
+
 export interface Post {
   slug: string
   title: string
   date: string
-  category: 'REACT' | 'TYPESCRIPT' | 'CSS' | 'DESIGN' | 'PIXEL'
+  category: Exclude<Category, 'ALL'>
   excerpt: string
   content: string
 }
@@ -277,5 +282,3 @@ pixels.map(px => (
   },
 ]
 
-export const categories = ['ALL', 'REACT', 'TYPESCRIPT', 'CSS', 'DESIGN', 'PIXEL'] as const
-export type Category = typeof categories[number]

@@ -22,7 +22,7 @@
 *, *::before, *::after {
   box-sizing: border-box;
   border-radius: 0 !important;
-  font-family: 'Mona', 'Courier New', monospace;
+  font-family: 'Mona12', 'Courier New', monospace;
   margin: 0;
   padding: 0;
 }

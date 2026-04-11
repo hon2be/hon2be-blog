@@ -80,21 +80,16 @@ export function Home({ onNavigate }: HomeProps) {
           </div>
         )}
 
-        <Divider />
-
-        {/* 액션 버튼 */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-          {hasMore && (
-            <PixelButton onClick={() => setVisibleCount(c => c + 4)}>
-              LOAD MORE
-            </PixelButton>
-          )}
-          <PixelButton icon="play" variant="icon" title="재생" />
-          <PixelButton icon="music" variant="icon" title="음악" />
-          <PixelButton icon="settings" variant="outline" title="설정">
-            SETTINGS
-          </PixelButton>
-        </div>
+        {hasMore && (
+          <>
+            <Divider />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
+              <PixelButton onClick={() => setVisibleCount(c => c + 4)}>
+                LOAD MORE
+              </PixelButton>
+            </div>
+          </>
+        )}
 
         {/* 푸터 */}
         <footer style={{
