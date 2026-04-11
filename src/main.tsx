@@ -34,15 +34,14 @@ postStyles.textContent = `
   [data-post] pre {
     background: var(--accent-bg) !important;
     border: 1.5px solid var(--border) !important;
-    border-left: 3px solid var(--accent) !important;
-    padding: 16px !important;
+    border-left: 3px solid var(--accent) !important;\
     overflow-x: auto !important;
     margin-bottom: 16px !important;
     font-size: 12px !important;
     line-height: 1.6 !important;
   }
-  [data-post] code {
-    font-family: 'Mona', 'Courier New', monospace !important;
+  html [data-post] code * {
+    font-family: 'Nanum Gothic Coding', 'JetBrains Mono', 'Courier New', monospace !important;
     font-size: 12px !important;
   }
   [data-post] p code, [data-post] li code {
