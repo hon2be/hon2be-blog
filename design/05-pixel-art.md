@@ -140,19 +140,41 @@ image-rendering: crisp-edges; /* Firefox fallback */
 
 | 방식 | 허용 | 용도 |
 |------|------|------|
-| `<img>` + objectPosition | ✅ | 꽃잎, 나무, 꽃 blossom |
-| CSS sprite (background-position) | ✅ | 동일 (대안적 구현) |
-| div 픽셀 배열 | ❌ | CherryBlossom, LoadingScreen에 사용 금지 |
+| CSS `background-image` + `background-position` | ✅ | 꽃잎, 나무, 꽃 blossom (현재 구현) |
+| `<img>` + objectPosition | ✅ | 동일 (대안) |
+| div 픽셀 배열 | ❌ | 장식 요소에 사용 금지 |
 | Canvas drawRect 픽셀 | ❌ | 동일 |
-| PixelButton 아이콘 | ✅ (div 배열) | UI 아이콘만 예외 허용 |
+| **SVG `<rect>` 배열** | ✅ | **UI 아이콘 전용** |
 
 ---
 
-## UI 아이콘 (PixelButton) — 별도 규칙
+## UI 아이콘 (PixelButton) — SVG 규칙
 
-PixelButton 내부 아이콘은 스프라이트 없이 div 좌표 배열로 구현한다.
-상세 규칙은 `06-pixel-art-generation.md` 참조.
+PixelButton 내부 아이콘은 **SVG + `<rect>`** 로 구현한다. div 배열 방식은 사용하지 않는다.
 
-- 그리드: 16×16, 배율 PIXEL_SIZE=2.5
-- 단색 실루엣, 외곽선 없음, 하이라이트 없음
-- 색상은 variant에서 전달된 단일 color 값만 사용
+### 구조
+
+```tsx
+<svg
+  width={ICON_SIZE}       // 18px (버튼 높이 36px의 1/2)
+  height={ICON_SIZE}      // 18px
+  viewBox="0 0 16 16"    // 16×16 픽셀 그리드
+  style={{ imageRendering: 'pixelated' }}
+>
+  {pixels.map((px, i) => (
+    <rect key={i} x={px.x} y={px.y} width={1} height={1} fill={color} />
+  ))}
+</svg>
+```
+
+### 크기 규칙
+
+- `ICON_SIZE = 18` — 버튼 높이(36px)의 **정확히 절반**
+- `viewBox="0 0 16 16"` — 픽셀 좌표계는 16×16 고정
+- SVG가 자동으로 16 → 18px 스케일링하므로 `PIXEL_SIZE` 상수 불필요
+
+### 아이콘 규칙
+
+- 단색 실루엣, 외곽선 없음, 하이라이트 없음 (장식 스프라이트와 다름)
+- `fill` 값은 variant에서 전달된 단일 color만 사용
+- `imageRendering: 'pixelated'` 필수 — SVG 확대 시 안티에일리어싱 방지

@@ -11,7 +11,8 @@ interface PixelButtonProps {
   title?: string
 }
 
-const PIXEL_SIZE = 2.5
+// 버튼 높이(36px)의 절반 — 아기자기한 비율 유지
+const ICON_SIZE = 18
 
 const ICON_PATTERNS: Record<IconType, { x: number; y: number }[]> = {
   play: [
@@ -130,28 +131,16 @@ const ICON_PATTERNS: Record<IconType, { x: number; y: number }[]> = {
 function PixelIcon({ type, color = 'white' }: { type: IconType; color?: string }) {
   const pattern = ICON_PATTERNS[type] ?? []
   return (
-    <div style={{
-      position: 'relative',
-      width: 16 * PIXEL_SIZE,
-      height: 16 * PIXEL_SIZE,
-      imageRendering: 'pixelated',
-      flexShrink: 0,
-    }}>
+    <svg
+      width={ICON_SIZE}
+      height={ICON_SIZE}
+      viewBox="0 0 16 16"
+      style={{ imageRendering: 'pixelated', flexShrink: 0, display: 'block' }}
+    >
       {pattern.map((px, i) => (
-        <div
-          key={i}
-          style={{
-            position: 'absolute',
-            left: px.x * PIXEL_SIZE,
-            top: px.y * PIXEL_SIZE,
-            width: PIXEL_SIZE,
-            height: PIXEL_SIZE,
-            backgroundColor: color,
-            imageRendering: 'pixelated',
-          }}
-        />
+        <rect key={i} x={px.x} y={px.y} width={1} height={1} fill={color} />
       ))}
-    </div>
+    </svg>
   )
 }
 

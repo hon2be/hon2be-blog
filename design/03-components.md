@@ -43,18 +43,32 @@ mousedown: box-shadow: 늘어남,                           transform: translate
 mouseup:  hover 상태로 복귀
 ```
 
-### 픽셀 아이콘
+### 픽셀 아이콘 — SVG 방식
 
-- 16×16 그리드 기반, `PIXEL_SIZE = 2.5` 배율 → 렌더 크기 40×40px
+아이콘은 **`<svg>` + `<rect>`** 로 구현한다. div 절대 위치 방식을 사용하지 않는다.
+
+```tsx
+// 버튼 높이(36px)의 1/2 = 18px
+<svg width={18} height={18} viewBox="0 0 16 16"
+     style={{ imageRendering: 'pixelated' }}>
+  {pixels.map((p, i) =>
+    <rect key={i} x={p.x} y={p.y} width={1} height={1} fill={color} />
+  )}
+</svg>
+```
+
+- 아이콘 크기: `18px` (버튼 높이 `36px`의 **정확히 1/2** — 아기자기한 비율 유지)
+- `viewBox="0 0 16 16"` — 픽셀 좌표계 고정
 - `imageRendering: 'pixelated'` 필수
-- 지원 아이콘: `play`, `pause`, `skip`, `check`, `close`, `music`, `settings`, `menu`, `question`
-- 아이콘 색상은 variant에 따라 자동 결정 (primary/icon → white, outline → `var(--accent)`)
+- 지원 아이콘: `play`, `pause`, `skip`, `check`, `close`, `music`, `settings`, `menu`, `question`, `back`
+- 아이콘 색상: primary/icon → white, outline → `var(--accent)`
 
 ### 규칙
 
 - 버튼에 `border-radius`를 절대 추가하지 않는다.
 - 그림자는 blur 없이 단색 오프셋만 사용한다.
 - 새 아이콘 추가 시 동일한 16×16 픽셀 그리드 패턴을 따른다.
+- 아이콘을 div로 구현하지 않는다. SVG `<rect>` 방식만 허용.
 
 ---
 

@@ -31,28 +31,24 @@ export function LoadingScreen({ onComplete }: Props) {
       gap: 32,
       animation: fadeOut ? 'screenFadeOut 0.6s forwards' : undefined,
     }}>
-      {/* 벚꽃 나무 — 스프라이트 좌상단 영역 */}
+      {/* 벚꽃 나무 — 스프라이트 실측: x=19 y=40 w=551 h=488 (native 1178×896)
+           display 0.4x → 220×195px */}
       <div style={{
         position: 'relative',
         width: 220,
-        height: 310,
+        height: 195,
         overflow: 'hidden',
       }}>
-        {/* 트리 reveal 애니메이션 */}
-        <img
-          src={spriteUrl}
-          alt="벚꽃 나무"
-          style={{
-            width: 220,
-            height: 310,
-            objectFit: 'none',
-            objectPosition: '0px 0px',
-            imageRendering: 'pixelated',
-            display: 'block',
-            animation: 'treeReveal 1.4s ease-out forwards',
-          }}
-        />
-        {/* 꽃 개화 — 수관 영역에 bloom 오버레이 */}
+        <div style={{
+          width: 220,
+          height: 195,
+          backgroundImage: `url(${spriteUrl})`,
+          backgroundSize: `${Math.round(1178 * 0.4)}px ${Math.round(896 * 0.4)}px`,
+          backgroundPosition: `${-Math.round(19 * 0.4)}px ${-Math.round(40 * 0.4)}px`,
+          backgroundRepeat: 'no-repeat',
+          imageRendering: 'pixelated',
+          animation: 'treeReveal 1.4s ease-out forwards',
+        }} />
         {phase === 'bloom' && (
           <div style={{
             position: 'absolute',
