@@ -14,6 +14,271 @@ export interface Post {
 
 export const posts: Post[] = [
   {
+    slug: 'llm-intro',
+    title: 'LLM이란 — 다음 단어를 예측하는 기계',
+    date: '2026.04.13',
+    category: 'AI',
+    excerpt: 'LLM은 결국 "다음 단어를 예측하는 기계"입니다. 어텐션 메커니즘부터 프롬프트 작동 원리까지, 개념을 직관적으로 정리합니다.',
+    content: `
+<h2>LLM이란 뭔가요</h2>
+<p>Large Language Model. 이름이 거창하지만 핵심은 하나입니다.</p>
+<p><strong>"다음에 올 단어를 확률로 예측하는 기계"</strong></p>
+<p>입력이 <code>"나는 오늘 밥을"</code> 이라면, 모델은 다음 단어의 확률 분포를 계산합니다.</p>
+<pre><code>"먹었다" → 42%
+"먹고"   → 28%
+"굶었다" → 7%
+...      → 나머지</code></pre>
+<p>이걸 수천억 번 반복해서 문장을 만들어냅니다. 놀랍게도, 이것만으로 코드를 짜고 논문을 요약하고 번역을 합니다.</p>
+
+<h2>어텐션(Attention) — 어디를 얼마나 볼 것인가</h2>
+<p>Transformer의 핵심은 Attention 메커니즘입니다. 각 단어를 처리할 때 <strong>"다른 단어들을 얼마나 참고할지"</strong> 가중치를 계산합니다.</p>
+<pre><code>입력: "그 은행은 강가에 있다"
+"은행"을 해석할 때:
+  → "강가" 에 높은 가중치  (금융 은행 ✗, 강변 나무 ✓)
+  → "있다" 에 낮은 가중치</code></pre>
+<p>이 가중치 계산이 Self-Attention이고, 여러 관점에서 동시에 계산하는 게 Multi-Head Attention입니다. 레이어가 깊을수록, 헤드가 많을수록 문맥 이해가 정교해집니다.</p>
+
+<h2>프리트레이닝 vs 파인튜닝</h2>
+<p>LLM은 두 단계로 만들어집니다.</p>
+<ul>
+  <li><strong>프리트레이닝</strong> — 인터넷 텍스트 수천억 토큰으로 "다음 단어 예측"을 반복. 비용: GPU 수백 대로 수개월</li>
+  <li><strong>파인튜닝(SFT)</strong> — 질문/답변 형식 데이터로 "대화하는 법"을 추가 학습. 프리트레이닝 모델을 베이스로 씀</li>
+</ul>
+<p>GPT, Claude, Llama 모두 이 구조입니다. 우리가 쓰는 챗봇은 대부분 SFT + RLHF까지 거친 모델입니다.</p>
+
+<h2>토큰이란</h2>
+<p>LLM은 글자가 아니라 <strong>토큰</strong> 단위로 처리합니다. 토큰은 대략 영어 0.75단어, 한국어는 1~2글자 수준입니다.</p>
+<pre><code>"안녕하세요" → ["안녕", "하", "세요"]  (3토큰)
+"Hello"      → ["Hello"]             (1토큰)</code></pre>
+<p>한국어가 영어보다 토큰을 더 많이 씁니다. 같은 내용도 컨텍스트 윈도우를 더 많이 차지한다는 뜻입니다.</p>
+
+<h2>컨텍스트 윈도우</h2>
+<p>모델이 한 번에 볼 수 있는 토큰 수가 컨텍스트 윈도우입니다. GPT-4o는 128k, Claude 3.5는 200k 토큰입니다. 이 범위를 넘어가면 모델은 앞 내용을 "잊습니다". 메모리가 아니라 주의 범위입니다.</p>
+
+<h2>요약</h2>
+<p>LLM = 어마어마한 텍스트로 학습한 확률 기계. 어텐션으로 문맥을 이해하고, 토큰 단위로 글을 생성합니다. 마법이 아니라 통계와 행렬 곱셈입니다.</p>
+`,
+  },
+  {
+    slug: 'stable-diffusion-intro',
+    title: 'Stable Diffusion 일반론 — 노이즈에서 그림이 나오는 원리',
+    date: '2026.04.13',
+    category: 'AI',
+    excerpt: '뿌연 화면에서 시작해 점점 그림이 나타나는 SD의 작동 원리를 직관적으로 설명합니다. CFG, 샘플러, VAE까지.',
+    content: `
+<h2>Stable Diffusion이란</h2>
+<p>Stable Diffusion(SD)은 텍스트 프롬프트로 이미지를 생성하는 오픈소스 AI 모델입니다. Midjourney나 DALL-E와 달리 로컬에서 직접 실행할 수 있습니다. 결과물은 <code>.safetensors</code> 형식의 모델 파일 하나입니다.</p>
+
+<h2>확산(Diffusion) 원리</h2>
+<p>이름 그대로 "확산"을 역으로 돌립니다.</p>
+<ol>
+  <li><strong>포워드 패스 (학습 때)</strong> — 원본 이미지에 조금씩 노이즈를 추가해 완전한 뿌연 화면을 만듦</li>
+  <li><strong>리버스 패스 (추론 때)</strong> — 완전한 노이즈에서 시작해 매 Step마다 "이 노이즈에서 뭘 빼면 원본에 가까워지지?" 를 U-Net이 예측</li>
+</ol>
+<p>기본 20~30 Step을 반복하면 노이즈가 이미지로 바뀝니다.</p>
+
+<h2>구성 요소</h2>
+<ul>
+  <li><strong>CLIP Text Encoder</strong> — 프롬프트를 벡터로 변환. 모델이 텍스트를 이해하는 창구</li>
+  <li><strong>U-Net</strong> — 매 Step마다 노이즈 예측. SD의 핵심 두뇌</li>
+  <li><strong>VAE</strong> — 픽셀 공간 ↔ 잠재 공간(Latent Space) 변환. SD는 작은 잠재 공간에서 연산하므로 빠름</li>
+  <li><strong>Scheduler (샘플러)</strong> — 노이즈 제거 방식. DPM++, Euler, DDIM 등이 있고 속도/품질 트레이드오프가 다름</li>
+</ul>
+
+<h2>CFG Scale</h2>
+<p>Classifier-Free Guidance. 프롬프트를 얼마나 강하게 따를지 조절하는 값입니다.</p>
+<pre><code>CFG 3  → 프롬프트 느슨하게, 창의적이지만 엉뚱함
+CFG 7  → 균형 (기본값)
+CFG 15 → 프롬프트 과충실, 색이 타버리거나 왜곡될 수 있음</code></pre>
+
+<h2>Checkpoint vs LoRA</h2>
+<p>SD 모델 파일 종류가 헷갈리는 경우가 많습니다.</p>
+<ul>
+  <li><strong>Checkpoint</strong> — 완전한 모델. 수 GB. 예: <code>Counterfeit-V3.0.safetensors</code></li>
+  <li><strong>LoRA</strong> — 체크포인트 위에 얹는 경량 파인튜닝 파일. 수십~수백 MB. 특정 화풍·캐릭터 추가 학습에 사용</li>
+  <li><strong>VAE</strong> — 색감·선명도 보정 파일. 체크포인트와 별도로 교체 가능</li>
+</ul>
+
+<h2>네거티브 프롬프트</h2>
+<p>"이게 나오지 않았으면 하는 것"을 명시합니다. CFG가 프롬프트 방향으로 당기듯, 네거티브 프롬프트는 반대 방향으로 밉니다.</p>
+<pre><code>negative: worst quality, low quality, blurry, extra fingers, deformed</code></pre>
+<p>품질에 가장 영향이 큰 요소 중 하나입니다.</p>
+
+<h2>요약</h2>
+<p>SD = 노이즈 → 이미지로 역확산. U-Net이 핵심이고, CFG로 프롬프트 충실도, 샘플러로 품질/속도를 조절합니다. 체크포인트가 기본이고 LoRA로 확장합니다.</p>
+`,
+  },
+  {
+    slug: 'stable-diffusion-lora',
+    title: 'LoRA로 내 캐릭터 학습시키기',
+    date: '2026.04.13',
+    category: 'AI',
+    excerpt: '특정 캐릭터·화풍을 SD에 주입하는 LoRA 학습 전 과정을 다룹니다. 데이터셋 구성, 태깅, 학습 설정, 결과 검증까지.',
+    content: `
+<h2>LoRA란</h2>
+<p>Low-Rank Adaptation. 전체 모델을 재학습하는 대신, 가중치 업데이트를 저랭크(Low-Rank) 행렬로 근사해 <strong>아주 작은 파일</strong>로 새 개념을 주입합니다. 수십~수백 MB 파일 하나로 캐릭터·화풍·오브젝트를 체크포인트에 얹을 수 있습니다.</p>
+
+<h2>언제 쓰나요</h2>
+<ul>
+  <li>일관된 캐릭터를 여러 포즈·배경에서 생성할 때</li>
+  <li>특정 작가 화풍을 재현할 때</li>
+  <li>특정 오브젝트(로고, 제품)를 이미지에 넣을 때</li>
+  <li>ControlNet 없이도 얼굴·체형 일관성이 필요할 때 (IP-Adapter FaceID로 보강 가능)</li>
+</ul>
+
+<h2>데이터셋 준비</h2>
+<p>학습 이미지 20~50장이면 충분합니다. 클로즈업·전신·다양한 각도를 섞어 준비합니다.</p>
+<ul>
+  <li>해상도: 512×512 또는 768×768 (정사각형 권장)</li>
+  <li>배경이 단순할수록 학습이 깔끔하게 됩니다</li>
+  <li>이미지마다 텍스트 태그 파일(<code>.txt</code>)이 필요합니다</li>
+</ul>
+
+<h2>WD14 Tagger로 자동 태깅</h2>
+<p>이미지에서 자동으로 Danbooru 태그를 생성해줍니다.</p>
+<pre><code>1girl, solo, long hair, red eyes,
+white background, standing, ...</code></pre>
+<p>자동 태그 뒤에 캐릭터 고유 트리거 단어를 추가합니다. 예: <code>mychar</code></p>
+<p>학습할 특징(빨간 눈 등)은 태그에서 제거하거나 유지 전략을 통일해야 합니다. "빨간 눈이 LoRA 담당인지, 프롬프트 담당인지"를 결정하세요.</p>
+
+<h2>학습 설정 (kohya-ss 기준)</h2>
+<pre><code>network_alpha:   16     # alpha/dim 비율로 학습 강도 조절
+network_dim:     32     # 저랭크 행렬 크기, 클수록 표현력↑ 파일↑
+learning_rate:   1e-4
+max_train_steps: 1500   # 이미지 수 × Repeats
+train_batch_size: 1
+resolution:      512,512</code></pre>
+<p>Repeats(반복 수) × 이미지 수 = 총 학습량입니다. 이미지 30장이면 Repeats 30~50이 일반적입니다.</p>
+
+<h2>Loss 읽는 법</h2>
+<p>학습 Loss가 0.08~0.12 구간에서 수렴하면 적당합니다. 너무 낮으면(<code>0.03</code> 이하) 오버핏 → 캐릭터는 나오지만 다양성이 없어집니다.</p>
+
+<h2>검증 프롬프트</h2>
+<pre><code>mychar, 1girl, sitting in front of a window,
+different pose, masterpiece, best quality</code></pre>
+<p>학습 이미지에 없던 포즈·배경으로 테스트합니다. 학습 이미지를 그대로 재현하면 오버핏 신호입니다.</p>
+
+<h2>요약</h2>
+<p>LoRA = 가볍게 새 개념 주입. 데이터셋 품질 &gt; 수량. 태그 전략이 결과를 결정합니다. 오버핏 방지를 위해 Loss와 검증 이미지를 꼭 체크하세요.</p>
+`,
+  },
+  {
+    slug: 'comfyui-workflow',
+    title: 'ComfyUI 워크플로우 — 노드로 SD 파이프라인 설계하기',
+    date: '2026.04.13',
+    category: 'AI',
+    excerpt: 'ComfyUI는 SD의 내부 파이프라인을 노드 그래프로 직접 조작하는 UI입니다. 기본 txt2img부터 Hires Fix, LoRA 적용까지 워크플로우를 정리합니다.',
+    content: `
+<h2>ComfyUI란</h2>
+<p>Automatic1111(WebUI)이 페달이 달린 자전거라면, ComfyUI는 엔진 튜닝 부품까지 분해해서 조립할 수 있는 구조입니다. SD의 내부 파이프라인을 <strong>노드 그래프</strong>로 직접 연결해 자유도가 매우 높습니다.</p>
+
+<h2>기본 txt2img 노드 구성</h2>
+<pre><code>CheckpointLoaderSimple
+  └─ MODEL ──────────────┐
+  └─ CLIP ───► CLIPTextEncode (positive)
+  └─ CLIP ───► CLIPTextEncode (negative)
+  └─ VAE ─────────────────┐
+                           ▼
+KSampler ◄── MODEL, positive, negative, latent
+  └─ LATENT ──► VAEDecode ◄── VAE
+                  └─ IMAGE ──► SaveImage</code></pre>
+<p>이 흐름이 SD의 전체 파이프라인입니다. 노드 하나씩 교체하거나 추가해서 기능을 확장합니다.</p>
+
+<h2>LoRA 적용</h2>
+<pre><code>CheckpointLoaderSimple
+  └─ MODEL, CLIP
+       ▼
+LoraLoader (lora_name, strength_model, strength_clip)
+  └─ MODEL ──► KSampler
+  └─ CLIP  ──► CLIPTextEncode</code></pre>
+<p>LoraLoader를 체크포인트와 KSampler 사이에 끼워 넣습니다. 복수 LoRA는 LoraLoader를 직렬로 연결합니다.</p>
+
+<h2>Hires Fix (고해상도 보정)</h2>
+<p>SD는 학습 해상도(512~768px)를 넘어가면 구도가 무너집니다. Hires Fix는 저해상도로 먼저 생성한 뒤 업스케일 후 재샘플링합니다.</p>
+<pre><code>KSampler (1024x1024)
+  └─ LATENT ──► LatentUpscale (1.5x)
+                  └─ LATENT ──► KSampler (denoise 0.45)
+                                  └─ VAEDecode ──► SaveImage</code></pre>
+<p><code>denoise 0.45</code> 정도면 구도를 유지하면서 디테일을 보강합니다. 너무 높이면 구도가 바뀝니다.</p>
+
+<h2>ImageUpscaleWithModel</h2>
+<p>Real-ESRGAN 같은 업스케일 모델을 노드로 연결해 4K까지 출력할 수 있습니다.</p>
+<pre><code>UpscaleModelLoader (RealESRGAN_x4.pth)
+  └─ UPSCALE_MODEL ──► ImageUpscaleWithModel ◄── IMAGE
+                          └─ IMAGE ──► SaveImage</code></pre>
+
+<h2>워크플로우 저장·불러오기</h2>
+<p>ComfyUI는 생성된 PNG에 워크플로우 JSON을 메타데이터로 내장합니다. 이미지를 ComfyUI에 드래그&amp;드롭하면 워크플로우가 그대로 복원됩니다.</p>
+
+<h2>장단점 비교</h2>
+<ul>
+  <li><strong>장점</strong> — 파이프라인 완전 제어, API 자동화, 커스텀 노드 생태계 풍부</li>
+  <li><strong>단점</strong> — 초기 진입 장벽, 노드 연결 실수 시 에러 추적이 번거로움</li>
+</ul>
+<p>WebUI에서 기초를 익힌 뒤 ComfyUI로 넘어오는 흐름이 일반적입니다.</p>
+`,
+  },
+  {
+    slug: 'llm-finetuning',
+    title: 'LLM 파인튜닝 — Mac에서 Llama·Phi 모델 직접 학습하기',
+    date: '2026.04.13',
+    category: 'AI',
+    excerpt: 'MLX-LM과 LoRA를 써서 M 시리즈 Mac에서 직접 LLM을 파인튜닝합니다. 데이터 포맷부터 학습, 테스트까지 전 과정을 다룹니다.',
+    content: `
+<h2>왜 파인튜닝인가</h2>
+<p>프롬프트 엔지니어링만으로는 한계가 있습니다. 특정 도메인 용어, 특정 말투, 특정 출력 형식을 <strong>항상</strong> 원한다면 파인튜닝이 답입니다. 전체 모델을 재학습하는 Full Fine-tuning은 GPU 수십 대가 필요하지만, <strong>LoRA 파인튜닝</strong>은 Mac에서도 가능합니다.</p>
+
+<h2>Full Fine-tuning vs LoRA</h2>
+<ul>
+  <li><strong>Full Fine-tuning</strong> — 모든 가중치 업데이트. 최대 성능이지만 비용·시간이 막대함</li>
+  <li><strong>LoRA Fine-tuning</strong> — 저랭크 행렬만 학습. 파라미터의 1~5%만 건드림. 성능 손실이 거의 없으면서 훨씬 가볍고 빠름</li>
+</ul>
+
+<h2>환경 — MLX-LM (Apple Silicon)</h2>
+<p>Apple의 MLX 프레임워크는 M 시리즈 칩의 통합 메모리(CPU+GPU 공유)를 활용합니다. M4 Pro 기준 14B 모델까지 로컬에서 파인튜닝이 가능합니다.</p>
+<pre><code>pip install mlx-lm</code></pre>
+
+<h2>지원 모델</h2>
+<p>Phi-3 mini (3.8B), Llama 3 (8B), Mistral 등 Hugging Face 모델 대부분을 지원합니다.</p>
+<pre><code>mlx_lm.lora \\
+  --model microsoft/Phi-3-mini-4k-instruct \\
+  --train \\
+  --data ./data \\
+  --learning-rate 1e-4 \\
+  --lora-layers 16 \\
+  --iters 1000</code></pre>
+
+<h2>데이터 포맷</h2>
+<p>instruct 형식 JSONL 파일이 필요합니다. <code>train.jsonl</code>, <code>valid.jsonl</code> 두 파일을 <code>./data</code> 폴더에 넣습니다.</p>
+<pre><code>{"text": "&lt;|user|&gt;\\n질문 내용&lt;|end|&gt;\\n&lt;|assistant|&gt;\\n원하는 답변&lt;|end|&gt;"}
+{"text": "&lt;|user|&gt;\\n다른 질문&lt;|end|&gt;\\n&lt;|assistant|&gt;\\n다른 답변&lt;|end|&gt;"}</code></pre>
+<p>모델마다 chat template이 다릅니다. Phi-3는 위 형식, Llama 3는 <code>&lt;|begin_of_text|&gt;</code> 형식을 씁니다. Hugging Face 모델 카드에서 확인하세요.</p>
+
+<h2>학습 중 모니터링</h2>
+<pre><code>Iter 100: Train loss 2.341, Val loss 2.187
+Iter 200: Train loss 1.823, Val loss 1.791
+Iter 500: Train loss 0.923, Val loss 0.961
+...</code></pre>
+<p>Val loss가 Train loss보다 많이 높아지기 시작하면 오버핏 신호입니다. 그 직전 체크포인트를 쓰세요.</p>
+
+<h2>Checkpoint 저장 및 변환</h2>
+<pre><code># 어댑터(LoRA 가중치)만 저장됨
+./adapters/
+
+# 체크포인트와 병합
+mlx_lm.fuse \\
+  --model microsoft/Phi-3-mini-4k-instruct \\
+  --adapter-path ./adapters \\
+  --save-path ./my-finetuned-model</code></pre>
+
+<h2>Claude Code와 함께 쓰기</h2>
+<p>데이터 생성이 막막하다면 Claude Code에 도메인 문서를 주고 QA 쌍을 뽑아달라고 하세요. "이 문서를 읽고 instruct JSONL 100개 만들어줘"만으로 데이터셋 준비 시간을 크게 줄일 수 있습니다.</p>
+
+<h2>요약</h2>
+<p>LoRA + MLX-LM으로 Mac에서도 LLM 파인튜닝이 됩니다. 데이터 포맷이 모델마다 다르니 chat template 확인이 필수. Val loss 추이를 보며 오버핏을 방지하세요.</p>
+`,
+  },
+  {
     slug: 'css-design-tokens',
     title: 'CSS 커스텀 프로퍼티로 디자인 시스템 구축하기',
     date: '2025.04.08',
