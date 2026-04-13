@@ -184,6 +184,59 @@ KSampler ◄── MODEL, positive, negative, latent
                   └─ IMAGE ──► SaveImage</code></pre>
 <p>이 흐름이 SD의 전체 파이프라인입니다. 노드 하나씩 교체하거나 추가해서 기능을 확장합니다.</p>
 
+<h2>노드 역할 표</h2>
+<p><code>CheckpointLoader → LoraLoader → IPAdapterFaceID → CLIPTextEncode(+/-) → KSampler → VAEDecode → FaceDetailer → ImageUpscaleWithModel → KSampler(denoise 0.45) → SaveImage</code></p>
+<table>
+  <thead>
+    <tr>
+      <th>노드</th>
+      <th>역할</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>CheckpointLoader</td>
+      <td>베이스 모델 로드. MODEL / CLIP / VAE 세 가지 출력을 제공합니다.</td>
+    </tr>
+    <tr>
+      <td>LoraLoader</td>
+      <td>캐릭터 LoRA를 주입해 모델에 <code>mychar_girl</code> 같은 특징을 추가합니다.</td>
+    </tr>
+    <tr>
+      <td>IPAdapterFaceID</td>
+      <td>참조 이미지의 얼굴 구조를 벡터로 추출해 생성 과정에 주입합니다.</td>
+    </tr>
+    <tr>
+      <td>CLIPTextEncode</td>
+      <td>프롬프트 텍스트를 벡터로 변환합니다. Positive / Negative를 각각 인코딩합니다.</td>
+    </tr>
+    <tr>
+      <td>KSampler</td>
+      <td>실제 이미지 생성 단계. 노이즈를 여러 Step으로 제거하며 이미지를 완성합니다.</td>
+    </tr>
+    <tr>
+      <td>VAEDecode</td>
+      <td>KSampler 출력(잠재 벡터)을 사람이 보는 이미지로 디코딩합니다.</td>
+    </tr>
+    <tr>
+      <td>FaceDetailer</td>
+      <td>얼굴 영역을 자동 감지해 고해상도로 재생성하고 이목구비를 선명하게 보정합니다.</td>
+    </tr>
+    <tr>
+      <td>ImageUpscaleWithModel</td>
+      <td>전체 이미지를 4배 업스케일합니다 (예: 512 → 2048).</td>
+    </tr>
+    <tr>
+      <td>KSampler (2차)</td>
+      <td>업스케일된 이미지에 디테일을 추가합니다. <code>denoise 0.45</code>로 원형을 유지하며 보정합니다.</td>
+    </tr>
+    <tr>
+      <td>SaveImage</td>
+      <td>최종 이미지를 <code>output</code> 폴더에 저장합니다.</td>
+    </tr>
+  </tbody>
+</table>
+
 <h2>LoRA 적용</h2>
 <pre><code>CheckpointLoaderSimple
   └─ MODEL, CLIP
