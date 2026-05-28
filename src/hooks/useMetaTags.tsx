@@ -11,6 +11,8 @@
  *   })
  */
 
+import { useEffect } from 'react'
+
 interface MetaTagsConfig {
   title: string
   description: string
@@ -23,7 +25,7 @@ interface MetaTagsConfig {
 }
 
 export function useMetaTags(config: MetaTagsConfig) {
-  React.useEffect(() => {
+  useEffect(() => {
     // Update document title
     document.title = config.title
 
