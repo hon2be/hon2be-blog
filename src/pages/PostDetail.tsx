@@ -7,7 +7,7 @@
  * - JSON-LD structured data
  */
 
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/rose-pine-moon.min.css'
 import { posts } from '../data/posts'
