@@ -1,8 +1,19 @@
+/**
+ * src/pages/PostDetail.tsx (Updated with SEO)
+ *
+ * Shows individual blog post with:
+ * - Dynamic meta tags (Open Graph, Twitter Card)
+ * - Canonical URL
+ * - JSON-LD structured data
+ */
+
 import { useEffect, useRef } from 'react'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/rose-pine-moon.min.css'
 import { posts } from '../data/posts'
 import { PixelButton } from '../components/PixelButton'
+import { StructuredData, createBlogPostingSchema } from '../components/StructuredData'
+import { useMetaTags } from '../hooks/useMetaTags'
 
 interface PostDetailProps {
   slug: string
@@ -21,11 +32,30 @@ export function PostDetail({ slug, onBack }: PostDetailProps) {
   const post = posts.find(p => p.slug === slug)
   const contentRef = useRef<HTMLDivElement>(null)
 
+  // Syntax highlighting
   useEffect(() => {
     contentRef.current?.querySelectorAll('pre code').forEach(el => {
       hljs.highlightElement(el as HTMLElement)
     })
   }, [slug])
+
+  // Update meta tags for this post
+  useMetaTags(
+    post ? {
+      title: `${post.title} - 🌸 DEV.LOG`,
+      description: post.excerpt,
+      url: `https://hon2be.github.io/hon2be-blog/#/post/${post.slug}`,
+      type: 'article',
+      image: 'https://hon2be.github.io/hon2be-blog/og-image.png',
+      author: 'hon2be',
+      publishedDate: post.date.replace(/\./g, '-'),
+      category: post.category,
+    } : {
+      title: '포스트를 찾을 수 없습니다 - 🌸 DEV.LOG',
+      description: '요청한 포스트를 찾을 수 없습니다.',
+      url: 'https://hon2be.github.io/hon2be-blog/',
+    }
+  )
 
   if (!post) {
     return (
@@ -46,9 +76,13 @@ export function PostDetail({ slug, onBack }: PostDetailProps) {
   }
 
   const badgeColor = CATEGORY_COLORS[post.category] ?? 'var(--accent)'
+  const structuredData = createBlogPostingSchema(post)
 
   return (
     <div style={{ minHeight: '100vh', position: 'relative' }}>
+      {/* JSON-LD Structured Data */}
+      <StructuredData type="BlogPosting" data={structuredData} />
+
       {/* 포스트 헤더 */}
       <header style={{
         position: 'sticky',
@@ -115,7 +149,7 @@ export function PostDetail({ slug, onBack }: PostDetailProps) {
         </h1>
 
         {/* 날짜 */}
-        <time style={{
+        <time dateTime={post.date.replace(/\./g, '-')} style={{
           display: 'block',
           fontSize: 10,
           color: 'var(--faint)',
@@ -133,7 +167,7 @@ export function PostDetail({ slug, onBack }: PostDetailProps) {
         }} />
 
         {/* 본문 */}
-        <div
+        <article
           ref={contentRef}
           data-post
           dangerouslySetInnerHTML={{ __html: post.content }}

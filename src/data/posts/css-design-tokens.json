@@ -1,0 +1,8 @@
+{
+  "slug": "css-design-tokens",
+  "title": "CSS 커스텀 프로퍼티로 디자인 시스템 구축하기",
+  "date": "2025.04.08",
+  "category": "CSS",
+  "excerpt": "CSS 변수를 활용해 일관된 디자인 토큰을 정의하고, 컴포넌트 간 색상·스페이싱을 중앙에서 관리하는 방법을 살펴봅니다.",
+  "content": "<h2>왜 디자인 토큰인가</h2>\n<p>프로젝트 규모가 커질수록 <code>#f07098</code> 같은 하드코딩 값이 수십 곳에 흩어지기 시작합니다. 브랜드 색상 하나를 바꾸려면 파일을 수십 개 열어야 하는 상황이 됩니다. CSS 커스텀 프로퍼티(변수)는 이 문제를 근본적으로 해결합니다.</p>\n\n<h2>토큰 정의</h2>\n<pre><code>:root {\n  --accent:    #f07098;\n  --accent-d:  #c04870;\n  --accent-dd: #7a1038;\n  --bg:        #fdf5fb;\n  --surface:   #ffffff;\n  --text:      #2a1020;\n}</code></pre>\n\n<p><code>:root</code>에 정의된 변수는 전체 문서에서 상속됩니다. <code>var(--accent)</code>로 어디서든 참조할 수 있고, 값을 바꾸면 모든 참조처가 자동으로 갱신됩니다.</p>\n\n<h2>스케일 설계 원칙</h2>\n<p>이 블로그의 액센트 팔레트처럼, 하나의 색상에서 파생 토큰을 만드는 방식이 효과적입니다.</p>\n<ul>\n  <li><strong>base</strong> — 주 사용처</li>\n  <li><strong>-d (dark)</strong> — 호버, 텍스트 강조</li>\n  <li><strong>-dd (darker)</strong> — 테두리, 그림자</li>\n  <li><strong>-l (light)</strong> — 밝은 배경, 호버 배경</li>\n  <li><strong>-xl / -bg</strong> — 아주 연한 배경, 선택 상태</li>\n</ul>\n\n<h2>컴포넌트에서 활용</h2>\n<pre><code>.button-primary {\n  background: var(--accent);\n  border: 1.5px solid var(--accent-dd);\n  box-shadow: 3px 3px 0 var(--accent-dd);\n  color: white;\n}</code></pre>\n\n<p>이제 <code>--accent</code> 하나만 바꾸면 버튼의 배경, 테두리, 그림자가 모두 연동됩니다. 다크 모드 전환도 <code>@media (prefers-color-scheme: dark)</code> 안에서 변수값만 재정의하면 됩니다.</p>\n\n<h2>마치며</h2>\n<p>디자인 토큰은 단순한 변수 모음이 아닙니다. 디자이너와 개발자 사이의 공통 언어이고, 코드베이스 전체의 일관성을 보장하는 계약입니다. 오늘부터 하드코딩 값 대신 <code>var(--)</code>를 습관화해보세요.</p>"
+}

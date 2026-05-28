@@ -1,0 +1,8 @@
+{
+  "slug": "noop-intro",
+  "title": "noop — 터미널 유휴 시간에 배우기",
+  "date": "2026.05.27",
+  "category": "AI",
+  "excerpt": "빌드 대기 시간을 미니게임과 학습 콘텐츠로 채우는 Claude Code 스킬을 소개합니다.",
+  "content": "<h2>아무것도 안 하는 척하지만</h2>\n<p>빌드 기다리며 화면만 봤던 경험 있으신가요? noop은 그런 <strong>시간낭비를 시간투자로</strong> 바꾸는 Claude Code 스킬입니다.</p>\n<p>noop의 이름은 \"no operation\"에서 왔어요. CPU 입장에서는 아무것도 안 하는 명령이지만, 우리 입장에서는 <strong>그 사이에 배우고 있다</strong>는 뜻입니다. 아이러니하죠?</p>\n\n<h2>어떻게 쓸까?</h2>\n<p>Claude Code에서 빌드나 테스트가 돌아가는 동안 자동으로 띄워집니다.</p>\n<pre><code>[빌드 중...]\n🎮 noop이 로드됐어요\n┌─────────────────┐\n│ 오늘의 미니게임 │\n│  Snake Game     │\n│ 화살표 + Enter  │\n└─────────────────┘</code></pre>\n<p>터미널에 미니게임이 뜹니다. <strong>Snake</strong>, <strong>퀴즈 게임</strong>, <strong>타이핑 레이서</strong>처럼 간단하면서도 중독성 있는 미니게임들이죠.</p>\n\n<h2>학습 콘텐츠</h2>\n<p>그냥 게임만 아니에요. 빈칸채우기, 블럭 이동, 객관식 같은 <strong>퀴즈 형식</strong>으로:</p>\n<ul>\n  <li>JavaScript/TypeScript 팁</li>\n  <li>웹 디자인 패턴</li>\n  <li>알고리즘 개념</li>\n  <li>개발 베스트 프랙티스</li>\n</ul>\n<p>이런 콘텐츠가 랜덤으로 나옵니다. \"어? 이런 건 처음 봤는데?\" 할 때 배움이 일어나요.</p>\n\n<h2>왜 noop?</h2>\n<ul>\n  <li><strong>시간 효율</strong>: 빌드 5분 = 새로운 개념 하나 배우기</li>\n  <li><strong>저마찰</strong>: 따로 설치나 학습 곡선 없음. 나타나고 그냥 놀면 됨</li>\n  <li><strong>마음가짐</strong>: \"공부해야지\" vs \"그냥 게임하면서 배우네?\" — 후자가 훨씬 쉬워요</li>\n</ul>\n\n<h2>시작하기</h2>\n<p>Claude Code에서 noop 스킬을 활성화하면 끝. 다음 빌드를 기다리면서 즐겨보세요.</p>"
+}
