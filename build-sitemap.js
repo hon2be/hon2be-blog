@@ -8,23 +8,36 @@
  *   "build": "tsc -b && vite build && node build-sitemap.js"
  */
 
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync, readdirSync } from 'fs'
 import { join } from 'path'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 // Read posts from src/data/posts/
-const postsDir = 'src/data/posts'
+const postsDir = join(__dirname, 'src/data/posts')
 let postSlugs = []
 
 try {
-  const fs = require('fs')
-  const files = fs.readdirSync(postsDir).filter(f => f.endsWith('.json'))
+  const files = readdirSync(postsDir).filter(f => f.endsWith('.json'))
+  console.log(`📁 Found ${files.length} post files`)
 
   postSlugs = files.map(file => {
-    const content = JSON.parse(readFileSync(join(postsDir, file), 'utf-8'))
-    return content.slug || file.replace('.json', '')
-  })
+    try {
+      const content = JSON.parse(readFileSync(join(postsDir, file), 'utf-8'))
+      return content.slug || file.replace('.json', '')
+    } catch (e) {
+      console.warn(`⚠️  Failed to parse ${file}:`, e.message)
+      return null
+    }
+  }).filter(Boolean)
+
+  console.log(`✅ Extracted ${postSlugs.length} post slugs:`, postSlugs)
 } catch (e) {
-  console.warn('Could not read posts directory. Using empty sitemap.')
+  console.error('❌ Could not read posts directory:', e.message)
+  console.log('📍 Tried path:', postsDir)
   postSlugs = []
 }
 
@@ -54,8 +67,10 @@ ${sitemapEntries.join('\n')}
 
 // Write to dist/
 try {
-  writeFileSync('dist/sitemap.xml', sitemap)
-  console.log(`✅ sitemap.xml generated (${postSlugs.length} posts + homepage)`)
+  writeFileSync(join(__dirname, 'dist/sitemap.xml'), sitemap)
+  console.log(`\n✅ sitemap.xml generated successfully!`)
+  console.log(`   📊 Total URLs: ${postSlugs.length} posts + 1 homepage`)
+  console.log(`   📍 Location: dist/sitemap.xml`)
 } catch (e) {
   console.error('❌ Failed to write sitemap.xml:', e.message)
   process.exit(1)
